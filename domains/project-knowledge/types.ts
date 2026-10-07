@@ -26,7 +26,12 @@ import type {
 import type { ProjectKnowledgeSemanticReviewer } from './learning.js';
 
 export type ProjectKnowledgeDocumentKind =
-  'native-spec' | 'native-archive' | 'classic-spec' | 'classic-archive' | 'superpowers' | 'custom';
+  | 'native-spec'
+  | 'native-archive'
+  | 'classic-spec'
+  | 'classic-archive'
+  | 'superpowers'
+  | 'custom';
 
 export interface ProjectKnowledgeDocument {
   readonly absolutePath: string;

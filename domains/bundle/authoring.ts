@@ -6,7 +6,12 @@ import type { AuthoringReview, AuthoringReviewFinding, BundleAuthoringState } fr
 
 export type AuthoringDepth = 'quick' | 'full';
 export type AuthoringLaneId =
-  'script' | 'reference' | 'pause-points' | 'workflow-entry' | 'skill-core' | 'skill-review';
+  | 'script'
+  | 'reference'
+  | 'pause-points'
+  | 'workflow-entry'
+  | 'skill-core'
+  | 'skill-review';
 
 export const AUTHORING_LANE_IDS: readonly AuthoringLaneId[] = [
   'script',

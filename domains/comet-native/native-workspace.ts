@@ -84,7 +84,8 @@ export type NativeWorkspaceDriftComponent =
   | 'native-root-legacy-identity';
 
 export type NativeWorkspaceFindingCode =
-  'workspace-root-changed' | 'workspace-inspection-unavailable';
+  | 'workspace-root-changed'
+  | 'workspace-inspection-unavailable';
 
 export const NATIVE_WORKSPACE_ADVISORY_CODES: ReadonlySet<NativeWorkspaceFindingCode> = new Set([
   'workspace-root-changed',

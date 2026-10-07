@@ -204,13 +204,15 @@ describe('Native v4 registered-worktree status discovery', () => {
     });
     expect(page.items.map(({ name }) => name)).toEqual(['legacy-side', 'portable-main']);
     const legacyItem = page.items.find(({ name }) => name === 'legacy-side') as
-      { migrationRequired?: boolean; workspace?: { projectRoot?: string } } | undefined;
+      | { migrationRequired?: boolean; workspace?: { projectRoot?: string } }
+      | undefined;
     expect(legacyItem).toMatchObject({
       migrationRequired: true,
     });
     expect(gitWorktree.samePath(legacyItem?.workspace?.projectRoot ?? '', legacyRoot)).toBe(true);
     const portableItem = page.items.find(({ name }) => name === 'portable-main') as
-      { schema?: string; workspace?: { projectRoot?: string; bindingState?: string } } | undefined;
+      | { schema?: string; workspace?: { projectRoot?: string; bindingState?: string } }
+      | undefined;
     expect(portableItem).toMatchObject({
       schema: 'comet.native.status.v2',
       workspace: {

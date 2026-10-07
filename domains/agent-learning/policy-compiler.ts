@@ -1,7 +1,11 @@
 import type { AgentContextVerification, AgentLearningState } from './types.js';
 
 export type ProjectPolicyKind =
-  'decision' | 'pattern' | 'procedure' | 'constraint' | 'failure-resolution';
+  | 'decision'
+  | 'pattern'
+  | 'procedure'
+  | 'constraint'
+  | 'failure-resolution';
 
 export type ProjectPolicyActivation =
   | { readonly kind: 'context' }

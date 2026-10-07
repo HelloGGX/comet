@@ -11,7 +11,10 @@ export type MemoryKind = 'explicit' | 'inferred';
 export type PersonalMemoryType = 'core-profile' | 'collaboration-policy' | 'personal-episode';
 export type MemoryLifecycleState = 'trial' | 'proven' | 'superseded';
 export type MemoryClass =
-  'user-fact' | 'user-preference' | 'collaboration-habit' | 'project-convention';
+  | 'user-fact'
+  | 'user-preference'
+  | 'collaboration-habit'
+  | 'project-convention';
 
 export function isMemoryClass(value: unknown): value is MemoryClass {
   return (
@@ -158,7 +161,12 @@ export interface MemoryObservationResult {
 }
 
 export type MemoryObservationResultKind =
-  'candidate-created' | 'candidate-promoted' | 'deduplicated' | 'ignored' | 'skipped' | 'deferred';
+  | 'candidate-created'
+  | 'candidate-promoted'
+  | 'deduplicated'
+  | 'ignored'
+  | 'skipped'
+  | 'deferred';
 
 export type MemoryLearningCheckKind = 'submitted' | 'no-observation' | 'not-run';
 
@@ -241,7 +249,10 @@ export interface MemoryExpandedView {
 }
 
 export type MemoryProviderQueryResult =
-  MemoryRetrieval | MemoryManagementView | MemoryManifestView | MemoryExpandedView;
+  | MemoryRetrieval
+  | MemoryManagementView
+  | MemoryManifestView
+  | MemoryExpandedView;
 
 export type MemoryManagementStatus = MemoryLifecycleState | 'conflict' | 'tombstoned';
 
@@ -642,7 +653,13 @@ export interface MemoryProviderQuery {
 export type MemoryProviderMutation =
   | {
       readonly operation:
-        'remember' | 'correct' | 'forget' | 'rollback' | 'observe' | 'review' | 'feedback';
+        | 'remember'
+        | 'correct'
+        | 'forget'
+        | 'rollback'
+        | 'observe'
+        | 'review'
+        | 'feedback';
       readonly input: unknown;
     }
   | {

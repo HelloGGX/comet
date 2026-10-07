@@ -12,7 +12,12 @@ export type BundleNextActionKind =
   | 'done';
 
 export type BundleNextActionCategory =
-  'factory' | 'eval' | 'review' | 'publish' | 'distribute' | 'complete';
+  | 'factory'
+  | 'eval'
+  | 'review'
+  | 'publish'
+  | 'distribute'
+  | 'complete';
 
 export interface BundleNextAction {
   action: BundleNextActionKind;

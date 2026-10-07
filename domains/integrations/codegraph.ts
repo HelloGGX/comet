@@ -35,9 +35,20 @@ type CodegraphProjectIndexStatus =
   | 'unavailable'
   | 'skipped';
 type CodegraphMcpStatus =
-  'registered' | 'partially_registered' | 'not_registered' | 'not_detected' | 'unavailable';
+  | 'registered'
+  | 'partially_registered'
+  | 'not_registered'
+  | 'not_detected'
+  | 'unavailable';
 type CodegraphAgentId =
-  'claude' | 'cursor' | 'codex' | 'opencode' | 'hermes' | 'gemini' | 'antigravity' | 'kiro';
+  | 'claude'
+  | 'cursor'
+  | 'codex'
+  | 'opencode'
+  | 'hermes'
+  | 'gemini'
+  | 'antigravity'
+  | 'kiro';
 
 interface CodegraphAgentDiagnostic {
   id: CodegraphAgentId;
@@ -204,7 +215,8 @@ function mergeCodegraphConfigLayers(
   }>,
 ): Array<{ candidate: CodegraphConfigCandidate; inspection: CodegraphMcpEntryInspection }> {
   let selected:
-    { candidate: CodegraphConfigCandidate; inspection: CodegraphMcpEntryInspection } | undefined;
+    | { candidate: CodegraphConfigCandidate; inspection: CodegraphMcpEntryInspection }
+    | undefined;
   let command: unknown;
   let enabled: boolean | undefined;
 

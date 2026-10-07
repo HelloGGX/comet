@@ -1410,7 +1410,8 @@ async function removeZcodeHooks(
     return { removed: 0, failed: 0 };
   }
   const existingPreToolUse = existingEvents.PreToolUse as
-    Array<Record<string, unknown>> | undefined;
+    | Array<Record<string, unknown>>
+    | undefined;
   if (!existingPreToolUse || !Array.isArray(existingPreToolUse)) {
     return { removed: 0, failed: 0 };
   }

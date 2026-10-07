@@ -8,7 +8,10 @@ export type WorkflowNativeArchiveConfirmation = 'automatic' | 'required';
 export type WorkflowNativeDocumentWrites = 'allow' | 'revert';
 export type WorkflowClassicDocumentEvidence = 'neutral' | 'strict';
 export type WorkflowNativeRootMoveCleanupKind =
-  'forward-source' | 'restart-staging' | 'rollback-destination' | 'rollback-staging';
+  | 'forward-source'
+  | 'restart-staging'
+  | 'rollback-destination'
+  | 'rollback-staging';
 
 export interface WorkflowNativeRootMoveCleanup {
   kind: WorkflowNativeRootMoveCleanupKind;
@@ -138,7 +141,11 @@ export type WorkflowBindingOperation = 'default' | WorkflowNodeOperation;
 export type WorkflowEnforcementLevel = 'guarded' | 'handoff-guarded' | 'evidence-only' | 'advisory';
 
 export type OutputValidationKind =
-  'evidence-only' | 'artifact-exists' | 'artifact-structured' | 'semantic' | 'state-transition';
+  | 'evidence-only'
+  | 'artifact-exists'
+  | 'artifact-structured'
+  | 'semantic'
+  | 'state-transition';
 
 export interface WorkflowArtifactSchema {
   id: string;

@@ -591,7 +591,9 @@ describe('local record provider contract', () => {
           absolutePath,
           source: `docs/${name}`,
           kind: (index === 0 ? 'native-spec' : index === 1 ? 'native-archive' : 'custom') as
-            'native-spec' | 'native-archive' | 'custom',
+            | 'native-spec'
+            | 'native-archive'
+            | 'custom',
         };
       }),
     );

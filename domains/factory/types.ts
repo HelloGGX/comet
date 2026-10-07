@@ -125,7 +125,10 @@ export interface GeneratedFactoryPlatformAgent {
 }
 
 export type GeneratedWrapperClassification =
-  'delegate-complete' | 'delegate-advisory' | 'scaffold-blocked' | 'kernel-authored';
+  | 'delegate-complete'
+  | 'delegate-advisory'
+  | 'scaffold-blocked'
+  | 'kernel-authored';
 
 export interface GeneratedFactorySkillPackage {
   packageRoot: string;

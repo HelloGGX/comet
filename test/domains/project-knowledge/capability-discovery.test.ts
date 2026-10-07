@@ -24,14 +24,16 @@ afterEach(async () => {
 });
 
 function provider(results: readonly ProjectKnowledgeResult[]) {
-  const query = vi.fn(async (): Promise<ProjectKnowledgeQueryResult> => ({
-    kind: 'search',
-    hits: [],
-    results,
-    records: [],
-    truncated: false,
-    diagnostics: [],
-  }));
+  const query = vi.fn(
+    async (): Promise<ProjectKnowledgeQueryResult> => ({
+      kind: 'search',
+      hits: [],
+      results,
+      records: [],
+      truncated: false,
+      diagnostics: [],
+    }),
+  );
   return {
     query,
     provider: {

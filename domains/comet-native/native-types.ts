@@ -114,7 +114,9 @@ export interface NativeChangeState extends NativeChangeStateFields {
 }
 
 export type NativeReadableChangeState =
-  NativeLegacyChangeState | NativeV2ChangeState | NativeChangeState;
+  | NativeLegacyChangeState
+  | NativeV2ChangeState
+  | NativeChangeState;
 
 export interface NativeChangeSchemaInspection {
   status: 'current' | 'migration-required' | 'runtime-incompatible';
@@ -279,7 +281,11 @@ export interface NativeFindingSummary {
 
 export type NativeContinuationDisposition = 'continue' | 'await-user' | 'blocked' | 'done';
 export type NativeContinuationAction =
-  'work-phase' | 'advance-phase' | 'repair' | 'archive' | 'none';
+  | 'work-phase'
+  | 'advance-phase'
+  | 'repair'
+  | 'archive'
+  | 'none';
 
 export interface NativeContinuationInputOption {
   input: string;
@@ -518,7 +524,10 @@ interface NativeTransitionJournalFields<TState extends NativeReadableChangeState
 }
 
 export type NativeTransitionOperation =
-  'advance' | 'spec-rebase' | 'evidence-retreat' | 'runtime-rebuild';
+  | 'advance'
+  | 'spec-rebase'
+  | 'evidence-retreat'
+  | 'runtime-rebuild';
 
 export interface NativeLegacyTransitionJournal extends NativeTransitionJournalFields<NativeLegacyChangeState> {
   schema: typeof NATIVE_LEGACY_TRANSITION_SCHEMA;
@@ -659,7 +668,11 @@ export interface NativeSchemaMigrationHooks {
 
 export type NativeTransactionKind = 'archive' | 'root-move';
 export type NativeTransactionStatus =
-  'prepared' | 'applying' | 'committed' | 'rolling-back' | 'rolled-back';
+  | 'prepared'
+  | 'applying'
+  | 'committed'
+  | 'rolling-back'
+  | 'rolled-back';
 
 export interface NativeTransactionOperation {
   id: string;
