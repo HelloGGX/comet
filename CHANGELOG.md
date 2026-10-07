@@ -2,6 +2,12 @@
 
 All notable changes to @rpamis/comet will be documented in this file.
 
+## What's Changed [0.4.4] - 2026-10-07
+
+### Added
+
+- **Sensors dashboard plugin**: Show Sensors static inspection results in a new Dashboard sidebar page, including check status, scores, metrics, issue locations, and snapshot comparisons. The first-party plugin reads the same `.sensors/` state files as `sensors show`, registers with no extra npm install, and supports refresh, disable, and uninstall without ever running check commands or starting the Sensors service. Reads stay inside the project's `.sensors/` directory with bounded limits (32 sources, 1 MiB per config, 8 MiB per state file) and reject links pointing outside the project.
+
 ## What's Changed [0.4.4] - 2026-10-03
 
 ### Added
