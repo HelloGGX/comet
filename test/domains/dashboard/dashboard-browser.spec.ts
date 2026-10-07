@@ -1,4 +1,372 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
+import type {
+  SensorsDashboardSnapshot,
+  SensorsDashboardSource,
+  SensorsReading,
+} from '../../../domains/comet-sensors/snapshot.js';
+
+test.describe('Sensors plugin center', () => {
+  const reading = (value = 5, direction: 'less' | 'more' = 'less'): SensorsReading => ({
+    success: true,
+    summary: '静态检测完成',
+    score: { value, direction, description: '代码质量', threshold: 10 },
+    metrics: [
+      {
+        key: 'warnings',
+        label: '警告数量',
+        value: 5,
+        unit: null,
+        direction: 'less',
+        threshold: 10,
+      },
+    ],
+    findings: [
+      {
+        message: '需要检查未使用变量',
+        severity: 'warning',
+        file: 'src/index.ts',
+        line: 12,
+        column: 3,
+        rule: 'no-unused-vars',
+        context: 'const unused = 1;',
+      },
+    ],
+    guidance: [{ rule: '修复建议', body: '删除未使用变量后重新检查。' }],
+    formatted: { summary_llm: '完整检测报告', failures_llm: '' },
+  });
+  const source = (configFile: string | null = '.sensors.yaml'): SensorsDashboardSource => ({
+    configFile,
+    stateFile: '.sensors-state/sensors.json',
+    status: 'ready',
+    state: {
+      lastUpdated: '2026-10-07T02:00:00.000Z',
+      runners: {
+        lint: {
+          status: 'success',
+          mode: 'auto',
+          lastRun: '2026-10-07T02:00:00.000Z',
+          reading: reading(),
+        },
+      },
+      snapshot: {
+        snapshot_id: 'previous',
+        timestamp: '2026-10-06T02:00:00.000Z',
+        runners: {
+          lint: {
+            status: 'success',
+            mode: 'auto',
+            lastRun: '2026-10-06T02:00:00.000Z',
+            reading: reading(10),
+          },
+        },
+      },
+      queryLog: [],
+    },
+  });
+  async function setup(page: Page) {
+    const fixture = {
+      data: {
+        projectRoot: '/fixture',
+        sources: [source()],
+        errors: [],
+      } as SensorsDashboardSnapshot,
+      disabled: false,
+      uninstalled: false,
+      reads: 0,
+      writes: [] as { path: string; body: unknown }[],
+    };
+    const pluginPage = () => ({
+      pluginId: 'comet.sensors',
+      pageId: 'comet.sensors',
+      label: 'Sensors',
+      route: '/plugins/sensors',
+      status: fixture.disabled ? 'disabled' : 'enabled',
+      globallyDisabled: fixture.disabled,
+      projectPaused: false,
+      diagnostics: [],
+      data: fixture.disabled ? null : fixture.data,
+    });
+    await page.setViewportSize({ width: 1600, height: 900 });
+    await page.route('**/api/dashboard/**', async (route) => {
+      const request = route.request();
+      const url = new URL(request.url());
+      if (request.method() !== 'GET')
+        fixture.writes.push({ path: url.pathname, body: request.postDataJSON() });
+      if (url.pathname === '/api/dashboard/projects') {
+        await route.fulfill({
+          json: {
+            currentProjectId: 'fixture-project',
+            projects: [
+              {
+                id: 'fixture-project',
+                name: 'Fixture',
+                path: '/fixture',
+                lastSeenAt: null,
+                availability: 'available',
+                isCurrent: true,
+              },
+            ],
+          },
+        });
+      } else if (url.pathname.endsWith('/overview')) {
+        await route.fulfill({
+          json: {
+            project: { name: 'Fixture', path: '/fixture', generatedAt: '2026-10-07T02:00:00.000Z' },
+            summary: {
+              activeChanges: 0,
+              archivedChanges: 0,
+              verifyFailed: 0,
+              tasksIncomplete: 0,
+              dirtyFiles: 0,
+            },
+            initialChanges: { status: 'active', items: [], total: 0, nextCursor: null },
+            git: {
+              branch: 'main',
+              head: 'abc1234',
+              dirtyFiles: 0,
+              dirtyFileList: [],
+              recentCommits: [],
+            },
+            risks: [],
+            native: null,
+          },
+        });
+      } else if (url.pathname.endsWith('/changes')) {
+        await route.fulfill({ json: { status: 'active', items: [], total: 0, nextCursor: null } });
+      } else if (url.pathname.endsWith('/plugins/comet.sensors/lifecycle')) {
+        const { action } = request.postDataJSON() as { action: string };
+        expect(['enable', 'disable', 'uninstall']).toContain(action);
+        fixture.disabled = action === 'disable';
+        fixture.uninstalled = action === 'uninstall';
+        await route.fulfill({ json: {} });
+      } else if (url.pathname.endsWith('/plugins/comet.sensors')) {
+        fixture.reads += 1;
+        await route.fulfill({ json: pluginPage() });
+      } else if (url.pathname.endsWith('/plugins')) {
+        await route.fulfill({ json: { pages: fixture.uninstalled ? [] : [pluginPage()] } });
+      } else {
+        await route.fulfill({ json: {} });
+      }
+    });
+    return fixture;
+  }
+  async function open(page: Page) {
+    await page.goto('/');
+    if (await page.getByRole('button', { name: '打开导航' }).isVisible()) {
+      await page.getByRole('button', { name: '打开导航' }).click();
+    }
+    await page.getByRole('menuitem', { name: /Sensors/ }).click();
+  }
+
+  test('opens an independent sidebar page and refreshes results without running commands', async ({
+    page,
+  }) => {
+    const fixture = await setup(page);
+    await open(page);
+    const center = page.getByRole('region', { name: 'Sensors 静态检测' });
+    await expect(center.getByRole('heading', { name: 'Sensors', exact: true })).toBeVisible();
+    await expect(center.getByText('静态检测完成', { exact: true })).toBeVisible();
+    await expect(center.getByText('上次快照 10 · 变化 -5 · 改善')).toBeVisible();
+    await expect(center.getByRole('cell', { name: '警告数量', exact: true })).toBeVisible();
+    await expect(
+      center.getByRole('cell', { name: 'src/index.ts:12:3', exact: true }),
+    ).toBeVisible();
+    await expect(center.getByRole('cell', { name: 'no-unused-vars', exact: true })).toBeVisible();
+    await center.getByText('检测报告', { exact: true }).click();
+    await expect(center.getByText('完整检测报告', { exact: true })).toBeVisible();
+    await center.getByText('修复建议', { exact: true }).click();
+    await expect(center.getByText('删除未使用变量后重新检查。', { exact: true })).toBeVisible();
+    await center.locator('.ant-table-row-expand-icon-collapsed').click();
+    await expect(center.getByText('const unused = 1;', { exact: true })).toBeVisible();
+    await page.screenshot({ path: '.tmp/sensors-ui.png', fullPage: true, animations: 'disabled' });
+    const previousReads = fixture.reads;
+    fixture.data.sources[0].state.runners.lint.reading!.summary = '已读取更新后的检测结果';
+    await center.getByRole('button', { name: '刷新 Sensors' }).click();
+    await expect(center.getByText('已读取更新后的检测结果', { exact: true })).toBeVisible();
+    expect(fixture.reads).toBeGreaterThan(previousReads);
+    expect(fixture.writes).toEqual([]);
+  });
+
+  test('supports state-only sources and interprets score changes in each direction', async ({
+    page,
+  }) => {
+    const fixture = await setup(page);
+    const stateOnly = source(null);
+    stateOnly.stateFile = '.sensors-state/coverage.json';
+    stateOnly.state.runners = {
+      coverage: {
+        status: 'below_threshold',
+        mode: 'auto',
+        lastRun: null,
+        reading: reading(80, 'more'),
+      },
+    };
+    stateOnly.state.snapshot!.runners = {
+      coverage: { status: 'success', mode: 'auto', lastRun: null, reading: reading(90, 'more') },
+    };
+    fixture.data.sources.push(stateOnly);
+    await open(page);
+    const stateSource = page.getByRole('region', {
+      name: 'Sensors 来源 .sensors-state/coverage.json',
+      exact: true,
+    });
+    await expect(
+      stateSource.getByText('.sensors-state/coverage.json', { exact: true }),
+    ).toBeVisible();
+    await expect(stateSource.getByText('未达到阈值', { exact: true })).toBeVisible();
+    await expect(stateSource.getByText('上次快照 90 · 变化 -10 · 恶化')).toBeVisible();
+    await expect(page.getByText('上次快照 10 · 变化 -5 · 改善')).toBeVisible();
+  });
+
+  test('explains pending, disabled and on-demand runners and empty results', async ({ page }) => {
+    const fixture = await setup(page);
+    fixture.data.sources[0].state.runners = {
+      pending: { status: 'pending', mode: 'auto', lastRun: null, reading: null },
+      disabled: { status: 'disabled', mode: 'disabled', lastRun: null, reading: null },
+      onDemand: { status: 'on_check', mode: 'on_check', lastRun: null, reading: null },
+    };
+    await open(page);
+    await expect(page.getByText('等待检查', { exact: true })).toBeVisible();
+    await expect(
+      page.getByText('此检测器已停用。请在 Sensors 配置中启用它，再运行 sensors start .。'),
+    ).toBeVisible();
+    await expect(
+      page.getByText('此检测器按需运行。请在项目目录运行 sensors check .，再刷新此页面。'),
+    ).toBeVisible();
+    fixture.data.sources = [];
+    await page.getByRole('button', { name: '刷新 Sensors' }).click();
+    await expect(page.getByText('当前项目还没有 Sensors 检测结果', { exact: true })).toBeVisible();
+    expect(fixture.writes).toEqual([]);
+  });
+
+  test('keeps corrupt sources visible alongside valid results and renders report text literally', async ({
+    page,
+  }) => {
+    const fixture = await setup(page);
+    const html = '<img src=x onerror="window.sensorsInjected=true">';
+    const validReading = fixture.data.sources[0].state.runners.lint.reading!;
+    validReading.summary = html;
+    validReading.findings[0].message = html;
+    validReading.formatted.summary_llm = html;
+    validReading.guidance[0].body = html;
+    const broken = source('packages/broken/.sensors.yaml');
+    broken.stateFile = 'packages/broken/.sensors-state/sensors.json';
+    broken.status = 'error';
+    broken.error = '状态文件包含无效 JSON';
+    broken.state.runners = {};
+    fixture.data.sources.push(broken);
+    fixture.data.errors = ['另一份 Sensors 配置无法读取'];
+    await open(page);
+    await expect(page.getByText('Sensors 数据读取失败', { exact: true })).toBeVisible();
+    await expect(page.getByText('状态文件无法读取', { exact: true })).toBeVisible();
+    await expect(page.getByText('状态文件包含无效 JSON', { exact: true })).toBeVisible();
+    const center = page.getByRole('region', { name: 'Sensors 静态检测' });
+    await center.getByText('检测报告', { exact: true }).click();
+    await center.getByText('修复建议', { exact: true }).click();
+    await expect(center.getByText(html, { exact: true })).toHaveCount(4);
+    await expect(center.locator('img')).toHaveCount(0);
+    expect(
+      await page.evaluate(() =>
+        Boolean((window as Window & { sensorsInjected?: boolean }).sensorsInjected),
+      ),
+    ).toBe(false);
+  });
+
+  test('re-enables a stopped plugin through the existing lifecycle action', async ({ page }) => {
+    const fixture = await setup(page);
+    fixture.disabled = true;
+    await open(page);
+    await expect(page.getByText('插件已停用', { exact: true })).toBeVisible();
+    await expect(page.getByRole('region', { name: 'Sensors 静态检测' })).toHaveCount(0);
+    await page.getByRole('button', { name: '重新启用' }).click();
+    await expect(page.getByRole('region', { name: 'Sensors 静态检测' })).toBeVisible();
+    expect(fixture.writes).toEqual([
+      {
+        path: '/api/dashboard/projects/fixture-project/plugins/comet.sensors/lifecycle',
+        body: { action: 'enable' },
+      },
+    ]);
+  });
+
+  test('stops, re-enables and uninstalls the plugin through lifecycle controls', async ({
+    page,
+  }) => {
+    const fixture = await setup(page);
+    await open(page);
+    await page.getByRole('button', { name: '停用插件', exact: true }).click();
+    await expect(page.getByText('插件已停用', { exact: true })).toBeVisible();
+    await page.getByRole('button', { name: '重新启用', exact: true }).click();
+    await expect(page.getByRole('region', { name: 'Sensors 静态检测' })).toBeVisible();
+    await page.getByRole('button', { name: '卸载插件', exact: true }).click();
+    const confirmation = page.getByRole('dialog');
+    await expect(
+      confirmation.getByText('卸载只停止 Comet 插件，Sensors 配置和检测结果会保留。'),
+    ).toBeVisible();
+    await confirmation.getByRole('button', { name: /^取\s*消$/ }).click();
+    expect(fixture.writes).toHaveLength(2);
+    await page.getByRole('button', { name: '卸载插件', exact: true }).click();
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^卸\s*载$/ })
+      .click();
+    await expect(page.getByRole('menuitem', { name: /Sensors/ })).toHaveCount(0);
+    expect(fixture.writes.map((write) => write.body)).toEqual([
+      { action: 'disable' },
+      { action: 'enable' },
+      { action: 'uninstall' },
+    ]);
+  });
+
+  test('keeps a long findings list scrollable without overflowing a narrow screen', async ({
+    page,
+  }) => {
+    const fixture = await setup(page);
+    const validReading = fixture.data.sources[0].state.runners.lint.reading!;
+    validReading.findings = Array.from({ length: 80 }, (_, index) => ({
+      ...validReading.findings[0],
+      message: `问题 ${index + 1}：${'长路径与检测说明'.repeat(20)}`,
+      file: `src/${'nested/'.repeat(30)}file-${index}.ts`,
+    }));
+    await page.setViewportSize({ width: 390, height: 844 });
+    await open(page);
+    const center = page.getByRole('region', { name: 'Sensors 静态检测' });
+    await expect(center.getByRole('button', { name: '刷新 Sensors' })).toBeVisible();
+    await page.screenshot({
+      path: '.tmp/sensors-ui-narrow.png',
+      animations: 'disabled',
+    });
+    await expect
+      .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth))
+      .toBe(true);
+    const findings = center
+      .getByRole('region', { name: 'lint 检测问题' })
+      .locator('.ant-table-body');
+    await findings.scrollIntoViewIfNeeded();
+    await expect
+      .poll(async () => {
+        const bounds = await findings.boundingBox();
+        return Boolean(bounds && bounds.y >= 0 && bounds.y + bounds.height <= 845);
+      })
+      .toBe(true);
+    await expect
+      .poll(() =>
+        findings.evaluate(
+          (element) =>
+            element.scrollHeight > element.clientHeight &&
+            element.scrollWidth > element.clientWidth,
+        ),
+      )
+      .toBe(true);
+    await findings.evaluate((element) => {
+      element.scrollTop = element.scrollHeight;
+      element.scrollLeft = element.scrollWidth;
+    });
+    await expect
+      .poll(() => findings.evaluate((element) => element.scrollTop > 0 && element.scrollLeft > 0))
+      .toBe(true);
+    await page.screenshot({ path: '.tmp/sensors-ui-narrow-findings.png', animations: 'disabled' });
+  });
+});
 
 test.describe('Dashboard project selection', () => {
   const projects = Array.from({ length: 45 }, (_, index) => ({

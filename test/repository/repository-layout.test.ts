@@ -70,6 +70,7 @@ describe('repository layout registry', () => {
       'comet-memory',
       'comet-native',
       'comet-plugin',
+      'comet-sensors',
       'dashboard',
       'engine',
       'eval',

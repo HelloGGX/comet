@@ -267,7 +267,15 @@
       },
       {
         "from": "comet-plugin",
+        "to": "comet-sensors"
+      },
+      {
+        "from": "comet-plugin",
         "to": "workflow-contract"
+      },
+      {
+        "from": "comet-sensors",
+        "to": "comet-plugin"
       },
       {
         "from": "dashboard",
@@ -276,6 +284,10 @@
       {
         "from": "dashboard",
         "to": "comet-plugin"
+      },
+      {
+        "from": "dashboard",
+        "to": "comet-sensors"
       },
       {
         "from": "dashboard",
@@ -396,6 +408,7 @@
       "domains/comet-native/native-types.ts",
       "domains/comet-native/native-workspace.ts",
       "domains/comet-plugin/index.ts",
+      "domains/comet-sensors/index.ts",
       "domains/engine/loop.ts",
       "domains/engine/protected-run-file.ts",
       "domains/engine/resolver.ts",
@@ -487,6 +500,7 @@
     "comet-memory",
     "comet-native",
     "comet-plugin",
+    "comet-sensors",
     "dashboard",
     "engine",
     "eval",

@@ -64,6 +64,7 @@ import {
   runMermaid,
 } from './markdown-preview.js';
 import { NativeWorkflowPanel } from './native-workflow-panel.jsx';
+import { SensorsCenter } from './sensors-center.jsx';
 import { WorkflowPhaseTrack } from './phase-progress-indicator.jsx';
 import {
   classicChangeStatusPresentation,
@@ -4242,6 +4243,20 @@ function PluginCenterPage({ page, loading, error, readOnly = false, onRetry, onI
       <>
         {syncError}
         <PersonalMemoryCenter data={page.data} readOnly={readOnly} onInvoke={onInvoke} />
+      </>
+    );
+  }
+  if (page.pluginId === 'comet.sensors') {
+    return (
+      <>
+        {syncError}
+        <SensorsCenter
+          data={page.data}
+          refreshing={loading}
+          onRefresh={onRetry}
+          readOnly={readOnly}
+          onInvoke={onInvoke}
+        />
       </>
     );
   }

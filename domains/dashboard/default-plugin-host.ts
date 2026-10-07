@@ -2,6 +2,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { existsSync } from 'node:fs';
 import { createDefaultCometPluginBridge } from '../comet-plugin/index.js';
+import { createSensorsDashboardContribution, SENSORS_PLUGIN_ID } from '../comet-sensors/index.js';
 import {
   createProjectKnowledgeDashboardContribution,
   ProjectKnowledgeLocalStore,
@@ -94,6 +95,7 @@ export function createDefaultDashboardPluginHostFactory(
       runtime: bridge.pluginRuntime,
       projectId,
       pages: [
+        { pluginId: SENSORS_PLUGIN_ID, ...createSensorsDashboardContribution() },
         {
           pluginId: PROJECT_KNOWLEDGE_PLUGIN_ID,
           label: projectKnowledgePage.label,

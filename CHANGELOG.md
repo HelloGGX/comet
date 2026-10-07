@@ -2,6 +2,12 @@
 
 All notable changes to @rpamis/comet will be documented in this file.
 
+## What's Changed [0.4.5] - 2026-10-07
+
+### Added
+
+- **Sensors Dashboard plugin**: Browse the current project's Sensors results from a dedicated sidebar page, including runner status, findings, metrics, and score changes since the last snapshot. Refresh reads existing `.sensors` data without starting services or executing checks; project pause and explicit uninstall follow the existing plugin lifecycle.
+
 ## What's Changed [0.4.4] - 2026-09-24
 
 ### Fixed

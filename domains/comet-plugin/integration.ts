@@ -58,6 +58,7 @@ import { writeWorkflowProjectConfig } from '../workflow-contract/project-config-
 import { DEFAULT_WORKFLOW_MEMORY_PROJECT_CONFIG } from '../workflow-contract/project-config.js';
 import type { WorkflowMemoryProjectConfig } from '../workflow-contract/types.js';
 import { createProjectKnowledgePluginDescriptor } from '../project-knowledge/index.js';
+import { createSensorsPluginDescriptor } from '../comet-sensors/index.js';
 import type { WorkflowKnowledgeProjectConfig } from '../workflow-contract/types.js';
 import { DEFAULT_WORKFLOW_KNOWLEDGE_PROJECT_CONFIG } from '../workflow-contract/project-config.js';
 import type { ProjectKnowledgeSemanticReviewer } from '../project-knowledge/learning.js';
@@ -573,6 +574,7 @@ export async function createDefaultCometPluginBridge(
           ? { semanticReviewer: options.runProjectKnowledgeReview }
           : {}),
       }),
+      createSensorsPluginDescriptor({ projectRoot }),
     ],
   });
   if (!bestEffortContext) await runtime.reconcileFirstParty();
