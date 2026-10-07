@@ -1,3 +1,4 @@
+import { measureCometGitCommand } from '../../platform/process/runtime-metrics.js';
 import { spawnSync } from 'child_process';
 import path from 'path';
 import { Document, parseDocument } from 'yaml';
@@ -419,12 +420,14 @@ async function reviewModeDefault(): Promise<string | null> {
 }
 
 function gitOutput(args: string[]): string | null {
-  const result = spawnSync('git', args, {
-    cwd: classicCommandProjectRoot(),
-    encoding: 'utf8',
-    timeout: 30_000,
-    windowsHide: true,
-  });
+  const result = measureCometGitCommand(() =>
+    spawnSync('git', args, {
+      cwd: classicCommandProjectRoot(),
+      encoding: 'utf8',
+      timeout: 30_000,
+      windowsHide: true,
+    }),
+  );
   return result.status === 0 ? result.stdout.trim() : null;
 }
 
@@ -1062,7 +1065,8 @@ async function taskState(
   output: CommandOutput,
   name: string,
   action:
-    { kind: 'list' | 'assign' | 'sync-plan' } | { kind: 'complete'; id: string; revision: string },
+    | { kind: 'list' | 'assign' | 'sync-plan' }
+    | { kind: 'complete'; id: string; revision: string },
 ): Promise<void> {
   validateChangeName(name);
   const { directory } = await stateFile(name);

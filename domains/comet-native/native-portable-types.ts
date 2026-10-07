@@ -16,7 +16,11 @@ export type NativePortableVerificationAssurance =
   | 'user-confirmed-degraded';
 export type NativePortableAcceptanceResult = 'pending' | 'passed' | 'failed' | 'blocked';
 export type NativePortableHistoryOutcome =
-  'pass' | 'fail' | 'blocked' | 'execution-error' | 'recovery';
+  | 'pass'
+  | 'fail'
+  | 'blocked'
+  | 'execution-error'
+  | 'recovery';
 
 export interface NativePortableText {
   text: string;
@@ -84,6 +88,7 @@ export interface NativeBuilderHandoff {
   iteration: number;
   summary: NativePortableText;
   addressed_acceptance_ids: string[];
+  acceptance_review?: import('./native-builder-acceptance-review.js').NativeBuilderAcceptanceReview[];
   checks: NativeBuilderCheckSummary[];
   checks_truncated: boolean;
   known_limits: NativePortableText[];
@@ -161,7 +166,7 @@ export interface NativePortableState {
   state_version: number;
   brief: 'brief.md';
   /** Set on changes created or returned to Shape after the document contract was introduced. */
-  document_constraints_version?: 1;
+  document_constraints_version?: 1 | 2;
   shape_confirmation_hash?: string;
   children_contract_hash?: string;
   coordination_mode?: NativeSupervisorCoordinationMode;
@@ -243,7 +248,9 @@ export interface NativeLocalCheckState {
   log: string;
   /** Child process lifecycle persisted before and after spawn. */
   activeProcess?:
-    null | { status: 'starting' } | { status: 'running'; pid: number; identity?: string };
+    | null
+    | { status: 'starting' }
+    | { status: 'running'; pid: number; identity?: string };
   /** Set only by the Runtime after a real process completion. */
   evidence?: 'runtime';
   /** Digest tying the Runtime result fields to the captured log content. */
