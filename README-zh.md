@@ -25,7 +25,7 @@
 
 ## 💎赞助
 
-本项目由 [PackyCode](https://www.packyapi.ai/register?aff=DIId) 赞助方支持
+本项目由 [PackyCode](https://www.packyapi.ai/register?aff=DIId)、[RunApi](https://runapi.host)等赞助方支持
 
 > [想出现在这里？](mailto:benyuanming@gmail.com)
 
@@ -36,11 +36,21 @@
   <tr>
     <td width="25%" align="center" valign="middle">
       <a href="https://www.packyapi.ai/register?aff=DIId">
-        <img src="https://raw.githubusercontent.com/rpamis/comet/91378aef2976954761dc67487f54ba79de6106dd/img/PackyCode.png" alt="PackyCode Sponsor" width="180">
+        <img src="https://github.com/rpamis/comet/blob/master/img/PackyCode.png" alt="PackyCode Sponsor" width="180">
       </a>
     </td>
     <td width="75%" align="left" valign="middle">
       PackyCode 是一家稳定、高效的 API 中转服务商，一句话接入主流大模型。统一域名、统一密钥、智能容灾切换，97% 可用性。人民币1:1充值，无汇率无手续费坑，新用户首充立享折扣 + $1免费体验额度，多分组折扣低至 2 折起，提供专属Codex/Claude Code高速通道。<a href="https://www.packyapi.ai/register?aff=DIId">点此链接注册，立即开始使用！</a>
+    </td>
+  </tr>
+  <tr>
+    <td width="25%" align="center" valign="middle">
+      <a href="https://runapi.host">
+        <img src="https://github.com/rpamis/comet/blob/master/img/RunApi.jpg" alt="PackyCode Sponsor" width="180">
+      </a>
+    </td>
+    <td width="75%" align="left" valign="middle">
+      RunAPI 是高效稳定的 AI 模型 API 中转平台，一个 API Key 即可访问 OpenAI、Claude、Gemini、DeepSeek、Grok 等 150+ 主流模型，低至 1 折，极其稳定，可以无缝兼容 Claude Code、OpenClaw 等工具。<a href="https://runapi.host">点此链接注册，立即开始使用！</a>
     </td>
   </tr>
 </table>

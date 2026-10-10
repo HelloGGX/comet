@@ -25,7 +25,7 @@
 
 ## 💎 Sponsorship
 
-This project is supported by [PackyCode](https://www.packyapi.ai/register?aff=DIId).
+This project is supported by sponsors including [PackyCode](https://www.packyapi.ai/register?aff=DIId) and [RunAPI](https://runapi.host).
 
 > [Want to be featured here?](mailto:benyuanming@gmail.com)
 
@@ -36,13 +36,24 @@ This project is supported by [PackyCode](https://www.packyapi.ai/register?aff=DI
   <tr>
     <td width="25%" align="center" valign="middle">
       <a href="https://www.packyapi.ai/register?aff=DIId">
-        <img src="https://raw.githubusercontent.com/rpamis/comet/91378aef2976954761dc67487f54ba79de6106dd/img/PackyCode.png" alt="PackyCode Sponsor" width="180">
+        <img src="https://github.com/rpamis/comet/blob/master/img/PackyCode.png" alt="PackyCode Sponsor" width="180">
       </a>
     </td>
     <td width="75%" align="left" valign="middle">
       <p>Access leading AI models through PackyCode with one API endpoint and one API key. Enjoy fast, reliable access with automatic failover and dedicated high-speed routes for Codex and Claude Code.</p>
       <p>Get started with $1 in free credits, a discount on your first top-up, and savings of up to 80% on eligible routes. Pay in RMB with no currency conversion markups or extra top-up fees.</p>
       <p><a href="https://www.packyapi.ai/register?aff=DIId">Sign up through the link and start building today.</a></p>
+    </td>
+  </tr>
+  <tr>
+    <td width="25%" align="center" valign="middle">
+      <a href="https://runapi.host">
+        <img src="https://github.com/rpamis/comet/blob/master/img/RunApi.jpg" alt="RunAPI Sponsor" width="180">
+      </a>
+    </td>
+    <td width="75%" align="left" valign="middle">
+      <p>RunAPI is a fast, reliable AI model API gateway. Access over 150 leading models, including OpenAI, Claude, Gemini, DeepSeek, and Grok, with a single API key and discounts of up to 90%. It works seamlessly with tools such as Claude Code and OpenClaw.</p>
+      <p><a href="https://runapi.host">Sign up through the link and get started today.</a></p>
     </td>
   </tr>
 </table>
