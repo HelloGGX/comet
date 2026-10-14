@@ -65,6 +65,7 @@ import {
 import type { WorkflowKnowledgeProjectConfig } from '../workflow-contract/types.js';
 import { DEFAULT_WORKFLOW_KNOWLEDGE_PROJECT_CONFIG } from '../workflow-contract/project-config.js';
 import type { ProjectKnowledgeSemanticReviewer } from '../project-knowledge/learning.js';
+import { createSensorsPluginDescriptor } from '../comet-sensors/index.js';
 
 export interface CometPluginBridgeOptions {
   readonly projectRoot: string;
